@@ -137,6 +137,13 @@ export function PostHeader({
   text,
   replayTo,
 }: PostHeaderProps) {
+  const formatTime = (timeString: string) => {
+    return timeString
+      .replace("hours", "h")
+      .replace("hour", "h")
+      .replace("minutes", "m")
+      .replace("minute", "m");
+  };
   return (
     <div className="flex p-3 space-x-5">
       <Image
@@ -147,28 +154,34 @@ export function PostHeader({
         className="w-11 h-11 rounded-full z-10 bg-white"
       />
 
-      <div className="text-[15px] flex flex-col space-y-1.5">
-        <div className="flex items-center space-x-1.5 text-[#707E89]">
-          <span
-            className="font-bold text-[#0F1419] inline-block whitespace-nowrap
+      <div className="text-[15px] flex flex-col space-y-1.5 w-full">
+        <div className="flex justify-between items-stretch text-[#707E89]">
+          <div className="flex items-center space-x-1.5">
+            <span
+              className="font-bold text-[#0F1419] inline-block whitespace-nowrap
           overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
           min-[500px]:max-w-[140px] sm:max-w-[160px]"
-          >
-            {name}
-          </span>
-          <span
-            className="inline-block whitespace-nowrap
+            >
+              {name}
+            </span>
+
+            <span
+              className="inline-block whitespace-nowrap text-xs  font-bold
           overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
           min-[500px]:max-w-[140px] sm:max-w-[160px]"
-          >
-            @{username}
-          </span>
-          {timestamp && (
-            <>
-              <span>.</span>
-              <Moment fromNow>{timestamp.toDate()}</Moment>
-            </>
-          )}
+            >
+              @{username}
+            </span>
+          </div>
+          <div className="">
+            {timestamp && (
+              <>
+                <Moment fromNow className="text-xs" filter={formatTime}>
+                  {timestamp.toDate()}
+                </Moment>
+              </>
+            )}
+          </div>
         </div>
 
         <span>{text}</span>
