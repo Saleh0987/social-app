@@ -9,7 +9,7 @@ import PostInput from "../PostInput";
 import {XMarkIcon} from "@heroicons/react/24/outline";
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "@/firebase";
-import {Comment} from "../../app/[id]/page";
+import {Comment} from "../Comment";
 
 const fetchPost = async (id: string) => {
   const postRef = doc(db, "posts", id);

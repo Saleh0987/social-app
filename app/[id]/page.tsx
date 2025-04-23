@@ -1,6 +1,6 @@
 "use client";
+import {Comment} from "@/components/Comment";
 import LogoutModal from "@/components/modals/LogoutModal";
-import {PostHeader} from "@/components/Post";
 import Sidebar from "@/components/Sidebar";
 import SignUpPrompt from "@/components/SignUpPrompt";
 import Widgets from "@/components/Widgets";
@@ -114,25 +114,5 @@ export default async function page({params}: pageProps) {
       <SignUpPrompt />
       <LogoutModal />
     </>
-  );
-}
-
-interface CommentProps {
-  name: string;
-  username: string;
-  text: string;
-  image: string;
-}
-export function Comment({name, username, text, image}: CommentProps) {
-  return (
-    <div className="border-b border-gray-100">
-      <PostHeader name={name} username={username} text={text} image={image} />
-      <div className="flex space-x-14 p-3 ms-16">
-        <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-        <HeartIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-        <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-        <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-      </div>
-    </div>
   );
 }
