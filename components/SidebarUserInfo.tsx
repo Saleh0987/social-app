@@ -2,22 +2,16 @@
 import Image from "next/image";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {signOut} from "firebase/auth";
-import {auth} from "@/firebase";
-import {signOutUser} from "@/redux/slices/userSlice";
 import {AppDispatch, RootState} from "@/redux/store";
-import {closeLoginModal, closeSignUpModal} from "@/redux/slices/modalSlice";
 
 export default function SidebarUserInfo() {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
 
-  async function handleSignOut() {
-    await signOut(auth);
-    dispatch(signOutUser());
-    dispatch(closeSignUpModal());
-    dispatch(closeLoginModal());
-  }
+  const defaultImage = "/assets/user.png";
+  const profileImage = user.photoURL
+    ? user.photoURL
+    : defaultImage || defaultImage;
 
   return (
     <>
@@ -25,10 +19,9 @@ export default function SidebarUserInfo() {
         <div
           className="flex items-center justify-start lg:justify-center bg-gray-500/20 space-x-2 w-fit xl:w-[240px]
           hover:bg-gray-500/10 xl:p-3 xl:pe-6 rounded-full cursor-pointer transition-all duration-200"
-          onClick={() => handleSignOut()}
         >
           <Image
-            src={"/assets/user.png"}
+            src={profileImage}
             width={36}
             height={36}
             alt="Profile Image"

@@ -24,9 +24,13 @@ import {useDispatch, useSelector} from "react-redux";
 
 interface PostInputProps {
   insideModal?: boolean;
+  onCommentAdded?: (comment: any) => void;
 }
 
-export default function PostInput({insideModal}: PostInputProps) {
+export default function PostInput({
+  insideModal,
+  onCommentAdded,
+}: PostInputProps) {
   const [text, setText] = useState("");
   const user = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(false);
@@ -48,6 +52,7 @@ export default function PostInput({insideModal}: PostInputProps) {
         text: text,
         name: user.name,
         username: user.username,
+        image: user.photoURL || "",
         timestamp: serverTimestamp(),
         likes: [],
         comments: [],
@@ -61,18 +66,26 @@ export default function PostInput({insideModal}: PostInputProps) {
   }
 
   async function sendComment() {
+    if (!user.username) {
+      dispatch(openLoginModal());
+      return;
+    }
     setCommentLoading(true);
     try {
       const postRef = doc(db, "posts", commentDetails.id);
+      const newComment = {
+        name: user.name,
+        username: user.username,
+        text: text,
+        image: user.photoURL || "",
+      };
       await updateDoc(postRef, {
-        comments: arrayUnion({
-          name: user.name,
-          username: user.username,
-          text: text,
-        }),
+        comments: arrayUnion(newComment),
       });
       setText("");
-      dispatch(closeCommentModal());
+      if (onCommentAdded) {
+        onCommentAdded(newComment);
+      }
       setCommentLoading(false);
     } catch (error) {
       setCommentLoading(false);
@@ -80,10 +93,13 @@ export default function PostInput({insideModal}: PostInputProps) {
     }
   }
 
+  const defaultImage = "/assets/user.png";
+  const profileImage = user.photoURL ? user.photoURL : defaultImage;
+
   return (
     <div className="flex space-x-5 p-3 border-b border-gray-100">
       <Image
-        src={insideModal ? "/assets/user.png" : "/assets/logo.png"}
+        src={profileImage}
         width={44}
         height={44}
         alt={insideModal ? "Profile image" : "logo"}
@@ -108,7 +124,7 @@ export default function PostInput({insideModal}: PostInputProps) {
           </div>
 
           <button
-            disabled={!text}
+            disabled={!text || isLoading}
             onClick={() => (insideModal ? sendComment() : sendPost())}
             className="bg-[#ee0e3a] text-white w-[80px] h-[36px] rounded-full text-sm cursor-pointer disabled:opacity-50 flex items-center justify-center"
           >

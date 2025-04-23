@@ -4,11 +4,13 @@ const initialState = {
  signUpModalOpen: false,
  loginModalOpen: false,
  commentModalOpen: false,
+ logoutModalOpen: false,
  commentPostDetails: {
   name: "",
   username: "",
   id: "",
   text: "",
+  image: "",
  }
 };
 
@@ -34,11 +36,18 @@ const modalSlice = createSlice({
   closeCommentModal: (state) => {
    state.commentModalOpen = false;
   },
+  openLogoutModal: (state) => {
+   state.logoutModalOpen = true;
+  },
+  closeLogoutModal: (state) => {
+   state.logoutModalOpen = false;
+  },
   setCommentPostDetails: (state, action) => {
    state.commentPostDetails.name = action.payload.name;
    state.commentPostDetails.username = action.payload.username;
    state.commentPostDetails.id = action.payload.id;
    state.commentPostDetails.text = action.payload.text;
+   state.commentPostDetails.image = action.payload.image;
   },
 
  },
@@ -47,7 +56,8 @@ const modalSlice = createSlice({
 export const { openSignUpModal, closeSignUpModal,
  openLoginModal, closeLoginModal,
  openCommentModal, closeCommentModal,
- setCommentPostDetails
+ setCommentPostDetails,
+ openLogoutModal, closeLogoutModal
 } = modalSlice.actions;
 
 export default modalSlice.reducer;

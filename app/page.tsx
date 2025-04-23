@@ -1,5 +1,6 @@
 import LoadingScreen from "@/components/LoadingScreen";
 import CommentModal from "@/components/modals/CommentModal";
+import LogoutModal from "@/components/modals/LogoutModal";
 import PostFeed from "@/components/PostFeed";
 import Sidebar from "@/components/Sidebar";
 import SignUpPrompt from "@/components/SignUpPrompt";
@@ -16,6 +17,7 @@ export default function Home() {
       <CommentModal />
       <SignUpPrompt />
       <LoadingScreen />
+      <LogoutModal />
     </>
   );
 }

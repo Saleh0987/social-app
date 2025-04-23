@@ -1,4 +1,5 @@
 "use client";
+import LogoutModal from "@/components/modals/LogoutModal";
 import {PostHeader} from "@/components/Post";
 import Sidebar from "@/components/Sidebar";
 import SignUpPrompt from "@/components/SignUpPrompt";
@@ -33,6 +34,7 @@ interface Comment {
   name: string;
   username: string;
   text: string;
+  image: string;
 }
 
 export default async function page({params}: pageProps) {
@@ -60,7 +62,7 @@ export default async function page({params}: pageProps) {
                 <Image
                   width={44}
                   height={44}
-                  src="/assets/user.png"
+                  src={post?.image ? post?.image : "/assets/user.png"}
                   alt="Profile image"
                   className="w-11 h-11 rounded-full"
                 />
@@ -103,12 +105,14 @@ export default async function page({params}: pageProps) {
               name={comment.name}
               username={comment.username}
               text={comment.text}
+              image={comment.image}
             />
           ))}
         </div>
         <Widgets />
       </div>
       <SignUpPrompt />
+      <LogoutModal />
     </>
   );
 }
@@ -117,11 +121,12 @@ interface CommentProps {
   name: string;
   username: string;
   text: string;
+  image: string;
 }
-function Comment({name, username, text}: CommentProps) {
+export function Comment({name, username, text, image}: CommentProps) {
   return (
     <div className="border-b border-gray-100">
-      <PostHeader name={name} username={username} text={text} />
+      <PostHeader name={name} username={username} text={text} image={image} />
       <div className="flex space-x-14 p-3 ms-16">
         <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-not-allowed" />
         <HeartIcon className="w-[22px] h-[22px] cursor-not-allowed" />

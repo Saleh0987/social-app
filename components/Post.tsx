@@ -61,14 +61,15 @@ export default function Post({data, id}: PostProps) {
           name={data.name}
           timestamp={data.timestamp}
           text={data.text}
+          image={data.image}
         />
       </Link>
 
       <div className="ml-16 p-3 flex space-x-14">
-        <div className="relative">
+        <div className="relative ">
           <ChatBubbleOvalLeftEllipsisIcon
             className="w-[22px] h-[22px] cursor-pointer 
-          hover:text-[#ee0e3a] transition-all"
+          hover:text-[#ee0e3a] transition-all "
             onClick={() => {
               if (!user.username) {
                 dispatch(openLoginModal());
@@ -80,6 +81,7 @@ export default function Post({data, id}: PostProps) {
                   username: data.username,
                   id: id,
                   text: data.text,
+                  image: data.image,
                 })
               );
               dispatch(openCommentModal());
@@ -128,6 +130,7 @@ interface PostHeaderProps {
   timestamp?: Timestamp;
   text: string;
   replayTo?: string;
+  image?: string;
 }
 
 export function PostHeader({
@@ -136,7 +139,15 @@ export function PostHeader({
   timestamp,
   text,
   replayTo,
+  image,
 }: PostHeaderProps) {
+  const isArabic = (text: string) => {
+    const arabicRegex = /[\u0600-\u06FF]/;
+    return arabicRegex.test(text);
+  };
+
+  const textIsArabic = isArabic(text);
+
   const formatTime = (timeString: string) => {
     return timeString
       .replace("hours", "h")
@@ -144,50 +155,51 @@ export function PostHeader({
       .replace("minutes", "m")
       .replace("minute", "m");
   };
+
   return (
     <div className="flex p-3 space-x-5">
       <Image
-        src={"/assets/user.png"}
+        src={image ? image : "/assets/user.png"}
         width={44}
         height={44}
         alt="logo"
         className="w-11 h-11 rounded-full z-10 bg-white"
       />
 
-      <div className="text-[15px] flex flex-col space-y-1.5 w-full">
+      <div className={`text-[15px] flex flex-col space-y-1.5 w-full `}>
         <div className="flex justify-between items-stretch text-[#707E89]">
           <div className="flex items-center space-x-1.5">
             <span
               className="font-bold text-[#0F1419] inline-block whitespace-nowrap
-          overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
-          min-[500px]:max-w-[140px] sm:max-w-[160px]"
+              overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
+              min-[500px]:max-w-[140px] sm:max-w-[160px]"
             >
               {name}
             </span>
 
             <span
-              className="inline-block whitespace-nowrap text-xs  font-bold
-          overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
-          min-[500px]:max-w-[140px] sm:max-w-[160px]"
+              className="inline-block whitespace-nowrap text-xs font-bold
+              overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
+              min-[500px]:max-w-[140px] sm:max-w-[160px]"
             >
               @{username}
             </span>
           </div>
-          <div className="">
+          <div>
             {timestamp && (
-              <>
-                <Moment fromNow className="text-xs" filter={formatTime}>
-                  {timestamp.toDate()}
-                </Moment>
-              </>
+              <Moment fromNow className="text-xs" filter={formatTime}>
+                {timestamp.toDate()}
+              </Moment>
             )}
           </div>
         </div>
 
-        <span>{text}</span>
+        <span className=" p-3" dir={textIsArabic ? "rtl" : "ltr"}>
+          {text}
+        </span>
 
         {replayTo && (
-          <span className="text-[15px] text-[#707E89]">
+          <span className="text-[15px] text-[#707E89] text-right">
             Replaying to <span className="text-[#ee0e3a]">@{replayTo}</span>
           </span>
         )}
