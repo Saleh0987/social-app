@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
 import {closeSignUpModal, openSignUpModal} from "@/redux/slices/modalSlice";
 import {EyeIcon, EyeSlashIcon, XMarkIcon} from "@heroicons/react/24/outline";
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -19,6 +20,8 @@ export default function SignUpModal() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSignUpLoading, setIsSignUpLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
   const isOpen = useSelector(
     (state: RootState) => state.modals.signUpModalOpen
   );
@@ -26,32 +29,42 @@ export default function SignUpModal() {
   const dispatch: AppDispatch = useDispatch();
 
   async function handleSignUp() {
-    const userCredentials = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    setIsSignUpLoading(true);
+    try {
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-    await updateProfile(userCredentials.user, {
-      displayName: name,
-    });
+      await updateProfile(userCredentials.user, {
+        displayName: name,
+      });
 
-    dispatch(
-      signInUser({
-        name: userCredentials.user.displayName,
-        username: userCredentials.user.email!.split("@")[0],
-        email: userCredentials.user.email,
-        uid: userCredentials.user.uid,
-      })
-    );
+      dispatch(
+        signInUser({
+          name: userCredentials.user.displayName,
+          username: userCredentials.user.email!.split("@")[0],
+          email: userCredentials.user.email,
+          uid: userCredentials.user.uid,
+        })
+      );
+    } finally {
+      setIsSignUpLoading(false);
+    }
   }
 
   async function handleGuestLogin() {
-    await signInWithEmailAndPassword(
-      auth,
-      "guest123450000@gmail.com",
-      "12345678"
-    );
+    setIsGuestLoading(true);
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        "guest123450000@gmail.com",
+        "12345678"
+      );
+    } finally {
+      setIsGuestLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -100,7 +113,7 @@ export default function SignUpModal() {
                 value={name}
                 placeholder="Name"
                 className="w-full h-[54px] border border-gray-200 outline-none
-                 pl-3 rounded-[4px] focus:border-[#F4AF01] transition-all"
+                 pl-3 rounded-[4px] focus:border-[#ee0e3a] transition-all"
               />
               <input
                 type="email"
@@ -108,11 +121,11 @@ export default function SignUpModal() {
                 value={email}
                 placeholder="Email"
                 className="w-full h-[54px] border border-gray-200 outline-none
-                 pl-3 rounded-[4px] focus:border-[#F4AF01] transition-all"
+                 pl-3 rounded-[4px] focus:border-[#ee0e3a] transition-all"
               />
               <div
                 className="w-full h-[54px] border border-gray-200 outline-none
-                 rounded-[4px] focus-within:border-[#F4AF01] transition-all flex items-center
+                 rounded-[4px] focus-within:border-[#ee0e3a] transition-all flex items-center
                  overflow-hidden pr-3"
               >
                 <input
@@ -126,29 +139,43 @@ export default function SignUpModal() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="w-7 h-7 text-gray-400 cursor-pointer"
                 >
-                  {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+                  {showPassword ? (
+                    <EyeSlashIcon className="text-[#ee0e3a]" />
+                  ) : (
+                    <EyeIcon className="text-[#ee0e3a]" />
+                  )}
                 </div>
               </div>
             </div>
 
             <button
-              className="bg-[#F4AF01] text-white h-[48px]
-            rounded-full shadow-md mb-5 w-full"
-              onClick={() => {
-                handleSignUp();
-              }}
+              className="bg-[#ee0e3a] text-white h-[48px] rounded-full shadow-md mb-5 w-full flex items-center justify-center"
+              onClick={() => handleSignUp()}
+              disabled={isSignUpLoading || isGuestLoading}
             >
-              Sign Up
+              {isSignUpLoading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <ArrowPathIcon className="h-5 w-5 animate-spin text-white" />
+                </div>
+              ) : (
+                <span className="text-sm font-medium text-white">Sign Up</span>
+              )}
             </button>
             <span className="mb-5 text-sm text-center block">Or</span>
             <button
-              className="bg-[#F4AF01] text-white h-[48px]
-            rounded-full shadow-md mb-5 w-full"
-              onClick={() => {
-                handleGuestLogin();
-              }}
+              className="bg-[#ee0e3a] text-white h-[48px] rounded-full shadow-md mb-5 w-full flex items-center justify-center"
+              onClick={() => handleGuestLogin()}
+              disabled={isSignUpLoading || isGuestLoading}
             >
-              Log In as Guest
+              {isGuestLoading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <ArrowPathIcon className="h-5 w-5 animate-spin text-white" />
+                </div>
+              ) : (
+                <span className="text-sm font-medium text-white">
+                  Log In as Guest
+                </span>
+              )}
             </button>
           </div>
         </div>

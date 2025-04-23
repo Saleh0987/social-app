@@ -26,7 +26,7 @@ export default function LoadingScreen() {
           className="mb-5"
         />
         <h1 className="text-6xl font-bold mb-10">
-          Blogo <span className="text-pink-500">Blog</span>
+          Blogo <span className="text-[#ee0e3a]">Blog</span>
         </h1>
         <LinearProgress
           sx={{
@@ -34,7 +34,7 @@ export default function LoadingScreen() {
             height: 10,
             backgroundColor: "pink",
             "& .MuiLinearProgress-bar": {
-              backgroundColor: "black",
+              backgroundColor: "#ee0e3a",
             },
           }}
         />

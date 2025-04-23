@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
 import {closeLoginModal, openLoginModal} from "@/redux/slices/modalSlice";
 import {EyeIcon, EyeSlashIcon, XMarkIcon} from "@heroicons/react/24/outline";
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
 import {signInWithEmailAndPassword} from "firebase/auth";
 import {auth} from "@/firebase";
 
@@ -12,20 +13,32 @@ export default function LoginModal() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
   const isOpen = useSelector((state: RootState) => state.modals.loginModalOpen);
 
   const dispatch: AppDispatch = useDispatch();
 
   async function handleLogin() {
-    await signInWithEmailAndPassword(auth, email, password);
+    setIsLoginLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } finally {
+      setIsLoginLoading(false);
+    }
   }
 
   async function handleGuestLogin() {
-    await signInWithEmailAndPassword(
-      auth,
-      "guest123450000@gmail.com",
-      "12345678"
-    );
+    setIsGuestLoading(true);
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        "guest123450000@gmail.com",
+        "12345678"
+      );
+    } finally {
+      setIsGuestLoading(false);
+    }
   }
 
   return (
@@ -58,11 +71,11 @@ export default function LoginModal() {
                 value={email}
                 placeholder="Email"
                 className="w-full h-[54px] border border-gray-200 outline-none
-                 pl-3 rounded-[4px] focus:border-[#F4AF01] transition-all"
+                 pl-3 rounded-[4px] focus:border-[#ee0e3a] transition-all"
               />
               <div
                 className="w-full h-[54px] border border-gray-200 outline-none
-                 rounded-[4px] focus-within:border-[#F4AF01] transition-all flex items-center
+                 rounded-[4px] focus-within:border-[#ee0e3a] transition-all flex items-center
                  overflow-hidden pr-3"
               >
                 <input
@@ -77,27 +90,43 @@ export default function LoginModal() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="w-7 h-7 text-gray-400 cursor-pointer"
                 >
-                  {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+                  {showPassword ? (
+                    <EyeSlashIcon className="text-[#ee0e3a]" />
+                  ) : (
+                    <EyeIcon className="text-[#ee0e3a]" />
+                  )}
                 </div>
               </div>
             </div>
 
             <button
-              className="bg-[#F4AF01] text-white h-[48px]
-            rounded-full shadow-md mb-5 w-full"
+              className="bg-[#ee0e3a] text-white h-[48px] rounded-full shadow-md mb-5 w-full flex items-center justify-center"
               onClick={() => handleLogin()}
+              disabled={isLoginLoading || isGuestLoading}
             >
-              Login
+              {isLoginLoading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <ArrowPathIcon className="h-5 w-5 animate-spin text-white" />
+                </div>
+              ) : (
+                <span className="text-sm font-medium text-white">Login</span>
+              )}
             </button>
             <span className="mb-5 text-sm text-center block">Or</span>
             <button
-              className="bg-[#F4AF01] text-white h-[48px]
-            rounded-full shadow-md mb-5 w-full"
-              onClick={() => {
-                handleGuestLogin();
-              }}
+              className="bg-[#ee0e3a] text-white h-[48px] rounded-full shadow-md mb-5 w-full flex items-center justify-center"
+              onClick={() => handleGuestLogin()}
+              disabled={isLoginLoading || isGuestLoading}
             >
-              Log In as Guest
+              {isGuestLoading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <ArrowPathIcon className="h-5 w-5 animate-spin text-white" />
+                </div>
+              ) : (
+                <span className="text-sm font-medium text-white">
+                  Log In as Guest
+                </span>
+              )}
             </button>
           </div>
         </div>

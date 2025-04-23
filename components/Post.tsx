@@ -68,7 +68,7 @@ export default function Post({data, id}: PostProps) {
         <div className="relative">
           <ChatBubbleOvalLeftEllipsisIcon
             className="w-[22px] h-[22px] cursor-pointer 
-          hover:text-[#F4AF01] transition-all"
+          hover:text-[#ee0e3a] transition-all"
             onClick={() => {
               if (!user.username) {
                 dispatch(openLoginModal());
@@ -175,7 +175,7 @@ export function PostHeader({
 
         {replayTo && (
           <span className="text-[15px] text-[#707E89]">
-            Replaying to <span className="text-[#F4AF01]">@{replayTo}</span>
+            Replaying to <span className="text-[#ee0e3a]">@{replayTo}</span>
           </span>
         )}
       </div>

@@ -11,13 +11,16 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import SidebarUserInfo from "./SidebarUserInfo";
+import Link from "next/link";
 
 export default function Sidebar() {
   return (
-    <nav className="h-screen sm:flex flex-col sticky top-0 p-3 xl:ml-20 xl:mr-10">
+    <nav className="max-h-screen sm:flex flex-col sticky top-0 p-3 xl:ml-20 xl:mr-10">
       <div className="relative h-full flex flex-col">
         <div className="py-3">
-          <Image src={"/assets/logo.png"} width={48} height={48} alt="logo" />
+          <Link href="/">
+            <Image src={"/assets/logo.png"} width={48} height={48} alt="logo" />
+          </Link>
         </div>
         <ul>
           <SidebarLink Icon={HomeIcon} text="Home" />
@@ -27,12 +30,12 @@ export default function Sidebar() {
           <SidebarLink Icon={BookmarkIcon} text="Bookmarks" />
           <SidebarLink Icon={UserIcon} text="Profile" />
           <SidebarLink Icon={EllipsisHorizontalCircleIcon} text="More" />
-          <button
-            className="hidden xl:block bg-[#F4AF01] w-[200px] h-[52px] rounded-full 
+          {/* <button
+            className="hidden xl:block bg-[#ee0e3a] hover:bg-[#ee0e3a]/80 transition-all duration-300 w-[200px] h-[52px] rounded-full 
           text-white font-medium cursor-pointer shadow-md mt-2"
           >
             Bumble
-          </button>
+          </button> */}
         </ul>
         <SidebarUserInfo />
       </div>

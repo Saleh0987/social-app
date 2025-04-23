@@ -10,8 +10,8 @@ export default function SignUpPrompt() {
   return (
     !name && (
       <div
-        className="fixed w-full h-[80px] bg-[#F4AF01] bottom-0 flex justify-center 
-    lg:justify-between items-center md:space-x-5 lg:px-20 xl:px-40 2xl:px80"
+        className="fixed w-full h-[80px] bg-[#ee0e3a] bottom-0 flex justify-center 
+    lg:justify-between items-center md:space-x-5 lg:px-20 xl:px-40 2xl:px80 z-50"
       >
         <div className="hidden md:flex flex-col text-white">
           <span className="text-xl font-bold">

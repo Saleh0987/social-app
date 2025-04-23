@@ -3,6 +3,7 @@ import {db} from "@/firebase";
 import {closeCommentModal, openLoginModal} from "@/redux/slices/modalSlice";
 import {RootState} from "@/redux/store";
 import {
+  ArrowPathIcon,
   CalendarIcon,
   ChartBarIcon,
   FaceSmileIcon,
@@ -28,6 +29,9 @@ interface PostInputProps {
 export default function PostInput({insideModal}: PostInputProps) {
   const [text, setText] = useState("");
   const user = useSelector((state: RootState) => state.user);
+  const [loading, setLoading] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
+  const isLoading = loading || commentLoading;
   const commentDetails = useSelector(
     (state: RootState) => state.modals.commentPostDetails
   );
@@ -38,6 +42,7 @@ export default function PostInput({insideModal}: PostInputProps) {
       dispatch(openLoginModal());
       return;
     }
+    setLoading(true);
     try {
       await addDoc(collection(db, "posts"), {
         text: text,
@@ -48,12 +53,15 @@ export default function PostInput({insideModal}: PostInputProps) {
         comments: [],
       });
       setText("");
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error adding document: ", error);
     }
   }
 
   async function sendComment() {
+    setCommentLoading(true);
     try {
       const postRef = doc(db, "posts", commentDetails.id);
       await updateDoc(postRef, {
@@ -65,7 +73,9 @@ export default function PostInput({insideModal}: PostInputProps) {
       });
       setText("");
       dispatch(closeCommentModal());
+      setCommentLoading(false);
     } catch (error) {
+      setCommentLoading(false);
       console.error("Error adding document: ", error);
     }
   }
@@ -90,21 +100,27 @@ export default function PostInput({insideModal}: PostInputProps) {
 
         <div className="flex justify-between items-center pt-5 border-t border-gray-100">
           <div className="flex space-x-1.5 cursor-pointer">
-            <PhotoIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-            <ChartBarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-            <FaceSmileIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-            <CalendarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-            <MapPinIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
+            <PhotoIcon className="w-[22px] h-[22px] text-[#ee0e3a]" />
+            <ChartBarIcon className="w-[22px] h-[22px] text-[#ee0e3a]" />
+            <FaceSmileIcon className="w-[22px] h-[22px] text-[#ee0e3a]" />
+            <CalendarIcon className="w-[22px] h-[22px] text-[#ee0e3a]" />
+            <MapPinIcon className="w-[22px] h-[22px] text-[#ee0e3a]" />
           </div>
 
           <button
             disabled={!text}
             onClick={() => (insideModal ? sendComment() : sendPost())}
-            className="bg-[#F4AF01] text-white w-[80px] h-[36px] rounded-full 
-            text-sm cursor-pointer 
-            disabled:opacity-50"
+            className="bg-[#ee0e3a] text-white w-[80px] h-[36px] rounded-full text-sm cursor-pointer disabled:opacity-50 flex items-center justify-center"
           >
-            Bumble
+            {isLoading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <ArrowPathIcon className="h-5 w-5 animate-spin text-white" />
+              </div>
+            ) : (
+              <span className="text-sm font-medium text-white">
+                {insideModal ? "Reply" : "Bumble"}
+              </span>
+            )}
           </button>
         </div>
       </div>
