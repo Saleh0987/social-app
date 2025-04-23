@@ -14,6 +14,7 @@ import {
 } from "firebase/auth";
 import {auth} from "@/firebase";
 import {signInUser} from "@/redux/slices/userSlice";
+import Cookies from "js-cookie";
 
 export default function SignUpModal() {
   const [email, setEmail] = useState("");
@@ -57,11 +58,61 @@ export default function SignUpModal() {
   async function handleGuestLogin() {
     setIsGuestLoading(true);
     try {
-      await signInWithEmailAndPassword(
+      const guestEmail = Cookies.get("guestEmail");
+      const guestPassword = Cookies.get("guestPassword");
+
+      if (guestEmail && guestPassword) {
+        try {
+          const userCredentials = await signInWithEmailAndPassword(
+            auth,
+            guestEmail,
+            guestPassword
+          );
+
+          dispatch(
+            signInUser({
+              name: userCredentials.user.displayName,
+              username: userCredentials.user.email!.split("@")[0],
+              email: userCredentials.user.email,
+              uid: userCredentials.user.uid,
+            })
+          );
+          return;
+        } catch (error) {
+          console.error(
+            "Failed to sign in with stored guest credentials:",
+            error
+          );
+        }
+      }
+
+      const randomNum = Math.floor(1000 + Math.random() * 99000);
+      const newGuestEmail = `guest_${randomNum}@example.com`;
+      const newGuestPassword = "Guest12345678";
+
+      const userCredentials = await createUserWithEmailAndPassword(
         auth,
-        "guest123450000@gmail.com",
-        "12345678"
+        newGuestEmail,
+        newGuestPassword
       );
+
+      await updateProfile(userCredentials.user, {
+        displayName: `Guest`,
+      });
+
+      Cookies.set("guestEmail", newGuestEmail, {expires: 30});
+      Cookies.set("guestPassword", newGuestPassword, {expires: 30});
+
+      dispatch(
+        signInUser({
+          name: userCredentials.user.displayName,
+          username: userCredentials.user.email!.split("@")[0],
+          email: userCredentials.user.email,
+          uid: userCredentials.user.uid,
+        })
+      );
+    } catch (error) {
+      console.error("Guest login error:", error);
     } finally {
       setIsGuestLoading(false);
     }

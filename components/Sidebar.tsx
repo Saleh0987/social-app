@@ -16,7 +16,7 @@ import Link from "next/link";
 export default function Sidebar() {
   return (
     <nav className="max-h-screen sm:flex flex-col sticky top-0 p-3 xl:ml-20 xl:mr-10">
-      <div className="relative h-full flex flex-col">
+      <div className="relative h-full flex flex-col items-center xl:items-start">
         <div className="py-3">
           <Link href="/">
             <Image src={"/assets/logo.png"} width={48} height={48} alt="logo" />
@@ -30,12 +30,6 @@ export default function Sidebar() {
           <SidebarLink Icon={BookmarkIcon} text="Bookmarks" />
           <SidebarLink Icon={UserIcon} text="Profile" />
           <SidebarLink Icon={EllipsisHorizontalCircleIcon} text="More" />
-          {/* <button
-            className="hidden xl:block bg-[#ee0e3a] hover:bg-[#ee0e3a]/80 transition-all duration-300 w-[200px] h-[52px] rounded-full 
-          text-white font-medium cursor-pointer shadow-md mt-2"
-          >
-            Bumble
-          </button> */}
         </ul>
         <SidebarUserInfo />
       </div>
@@ -55,8 +49,8 @@ interface SidebarLinkProps {
 
 function SidebarLink({text, Icon}: SidebarLinkProps) {
   return (
-    <li className="flex items-center text-xl mb-2 space-x-3 p-2.5">
-      <Icon className="h-7" />
+    <li className="flex items-center text-xl mb-2 space-x-3 p-2.5 cursor-pointer">
+      <Icon className="h-7 hover:text-pink-700 transition-all duration-300" />
       <span className="hidden xl:block">{text}</span>
     </li>
   );
