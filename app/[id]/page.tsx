@@ -4,19 +4,16 @@ import LogoutModal from "@/components/modals/LogoutModal";
 import Sidebar from "@/components/Sidebar";
 import SignUpPrompt from "@/components/SignUpPrompt";
 import Widgets from "@/components/Widgets";
+import PostHeaders from "@/components/PostHeaders";
+import PostActions from "@/components/PostActions";
 import {db} from "@/firebase";
-import {
-  ArrowLeftIcon,
-  EllipsisHorizontalIcon,
-  ArrowUpTrayIcon,
-  ChartBarIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  HeartIcon,
-} from "@heroicons/react/24/outline";
+import {ArrowLeftIcon} from "@heroicons/react/24/outline";
 import {doc, getDoc} from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import {getAuth} from "firebase/auth";
+import CommentModal from "@/components/modals/CommentModal";
+import {useEffect} from "react";
 
 const fetchPost = async (id: string) => {
   const postRef = doc(db, "posts", id);
@@ -35,11 +32,15 @@ interface Comment {
   username: string;
   text: string;
   image: string;
+  commentImage?: string;
 }
 
 export default async function page({params}: pageProps) {
   const {id} = params;
   const post = await fetchPost(id);
+
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid || null;
 
   return (
     <>
@@ -57,62 +58,59 @@ export default async function page({params}: pageProps) {
           </div>
 
           <div className="flex flex-col p-3 space-y-5 border-b border-gray-100">
-            <div className="flex justify-between items-center mb-1.5">
-              <div className="flex space-x-3">
-                <Image
-                  width={44}
-                  height={44}
-                  src={post?.image ? post?.image : "/assets/user.png"}
-                  alt="Profile image"
-                  className="w-11 h-11 rounded-full"
-                />
-                <div className="flex flex-col text-[15px]">
-                  <span
-                    className="font-bold whitespace-nowrap
-                    overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
-                    min-[500px]:max-w-[140px] sm:max-w-[160px]"
-                  >
-                    {post?.name}
-                  </span>
-                  <span
-                    className="text-[#707E89] whitespace-nowrap
-                    overflow-hidden text-ellipsis max-w-[60px] min-[400px]:max-w-[100px]
-                    min-[500px]:max-w-[140px] sm:max-w-[160px] "
-                  >
-                    @{post?.username}
-                  </span>
-                </div>
-              </div>
-
-              <EllipsisHorizontalIcon className="w-5 h-5" />
-            </div>
-            <span className="text-[15px]">{post?.text}</span>
-          </div>
-
-          <div className="border-b border-gray-100 p-3 text-[15px]">
-            <span className="font-bold">{post?.likes.length}</span> Likes
-          </div>
-
-          <div className="border-b border-gray-100 p-3 text-[15px] flex justify-evenly">
-            <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-            <HeartIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-            <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-            <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-          </div>
-          {post?.comments.map((comment: Comment) => (
-            <Comment
-              key={comment.text}
-              name={comment.name}
-              username={comment.username}
-              text={comment.text}
-              image={comment.image}
+            <PostHeaders
+              postId={id}
+              image={post?.image}
+              name={post?.name}
+              username={post?.username}
             />
-          ))}
+            <span className="text-[15px]">{post?.text}</span>
+
+            {post?.postImage && (
+              <Image
+                src={post?.postImage}
+                width={200}
+                height={200}
+                alt="Post image"
+                className={`rounded-lg w-64 h-64 object-cover`}
+              />
+            )}
+          </div>
+
+          <PostActions
+            postId={id}
+            likes={post?.likes || []}
+            userId={userId}
+            name={post?.name || ""}
+            username={post?.username || ""}
+            text={post?.text || ""}
+            image={post?.image || "/assets/user.png"}
+            postImage={post?.postImage}
+            comments={post?.comments || []}
+          />
+
+          {post?.comments.length > 0 ? (
+            post?.comments.map((comment: Comment, index: number) => (
+              <Comment
+                index={index}
+                key={index}
+                name={comment.name}
+                username={comment.username}
+                text={comment.text}
+                image={comment.image}
+                commentImage={comment.commentImage}
+              />
+            ))
+          ) : (
+            <p className="text-center text-gray-500 p-3">No comments yet.</p>
+          )}
+          <div className="flex-shrink-0 mt-4 border-t border-gray-100 pt-4"></div>
         </div>
         <Widgets />
       </div>
       <SignUpPrompt />
       <LogoutModal />
+      <CommentModal />
     </>
   );
 }

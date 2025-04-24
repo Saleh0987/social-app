@@ -47,7 +47,10 @@ export default function CommentModal() {
       onClose={() => dispatch(closeCommentModal())}
       className="flex items-center justify-center"
     >
-      <div className="w-full sm:w-[600px] h-[90vh] sm:h-[80vh] bg-white sm:rounded-xl outline-none relative flex flex-col">
+      <div
+        className="w-full sm:w-[600px] h-[100vh] sm:h-[90vh] bg-white sm:rounded-xl 
+      outline-none relative flex flex-col"
+      >
         <XMarkIcon
           className="w-7 mt-5 ms-5 cursor-pointer absolute top-0 left-0 z-10"
           onClick={() => dispatch(closeCommentModal())}
@@ -60,19 +63,23 @@ export default function CommentModal() {
               text={commentDetails.text}
               replayTo={commentDetails.username}
               image={commentDetails.image}
+              postImage={commentDetails.postImage}
+              commentImage={commentDetails.commentImage}
+              insideModal={true}
             />
-            <div className="absolute w-0.5 h-36 bg-gray-300 left-[33px] sm:left-[53px] top-20 z-0"></div>
           </div>
 
           <div ref={commentsRef} className="flex-grow mt-4 overflow-y-auto">
             {comments.length > 0 ? (
-              comments.map((comment) => (
+              comments.map((comment, index) => (
                 <Comment
-                  key={comment.text}
+                  index={index}
+                  key={index}
                   name={comment.name}
                   username={comment.username}
                   text={comment.text}
                   image={comment.image}
+                  commentImage={comment.commentImage}
                 />
               ))
             ) : (

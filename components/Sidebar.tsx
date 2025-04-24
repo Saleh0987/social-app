@@ -37,7 +37,6 @@ export default function Sidebar() {
           <SidebarLink Icon={InboxIcon} text="Messages" />
           <SidebarLink Icon={BookmarkIcon} text="Bookmarks" />
           <SidebarLink Icon={UserIcon} text="Profile" />
-          <SidebarLink Icon={EllipsisHorizontalCircleIcon} text="More" />
           {user?.name && (
             <li
               className="flex items-center text-xl mb-2 space-x-3 p-2.5 cursor-pointer"
@@ -49,6 +48,8 @@ export default function Sidebar() {
               <span className="hidden xl:block">Logout</span>
             </li>
           )}
+          <SidebarLink Icon={EllipsisHorizontalCircleIcon} text="More" />
+
           <SidebarUserInfo />
         </ul>
       </div>

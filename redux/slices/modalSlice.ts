@@ -11,6 +11,8 @@ const initialState = {
   id: "",
   text: "",
   image: "",
+  postImage: "",
+  commentImage: "",
  }
 };
 
@@ -48,6 +50,8 @@ const modalSlice = createSlice({
    state.commentPostDetails.id = action.payload.id;
    state.commentPostDetails.text = action.payload.text;
    state.commentPostDetails.image = action.payload.image;
+   state.commentPostDetails.postImage = action.payload.postImage;
+   state.commentPostDetails.commentImage = action.payload.commentImage;
   },
 
  },

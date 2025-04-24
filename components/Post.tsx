@@ -54,7 +54,7 @@ export default function Post({data, id}: PostProps) {
   }
 
   return (
-    <div className="border-b border-gray-100">
+    <div className="border-b border-gray-100 shadow-sm">
       <Link href={"/" + id}>
         <PostHeader
           username={data.username}
@@ -62,6 +62,7 @@ export default function Post({data, id}: PostProps) {
           timestamp={data.timestamp}
           text={data.text}
           image={data.image}
+          postImage={data.postImage}
         />
       </Link>
 
@@ -82,6 +83,7 @@ export default function Post({data, id}: PostProps) {
                   id: id,
                   text: data.text,
                   image: data.image,
+                  postImage: data.postImage,
                 })
               );
               dispatch(openCommentModal());
@@ -131,6 +133,9 @@ interface PostHeaderProps {
   text: string;
   replayTo?: string;
   image?: string;
+  postImage?: string;
+  insideModal?: boolean;
+  commentImage?: string;
 }
 
 export function PostHeader({
@@ -140,14 +145,15 @@ export function PostHeader({
   text,
   replayTo,
   image,
+  postImage,
+  commentImage,
+  insideModal,
 }: PostHeaderProps) {
   const isArabic = (text: string) => {
     const arabicRegex = /[\u0600-\u06FF]/;
     return arabicRegex.test(text);
   };
-
   const textIsArabic = isArabic(text);
-
   const formatTime = (timeString: string) => {
     return timeString
       .replace("hours", "h")
@@ -194,12 +200,36 @@ export function PostHeader({
           </div>
         </div>
 
-        <span className=" p-3" dir={textIsArabic ? "rtl" : "ltr"}>
+        <span className="p-3" dir={textIsArabic ? "rtl" : "ltr"}>
           {text}
         </span>
 
+        {postImage && (
+          <Image
+            src={postImage}
+            width={200}
+            height={200}
+            alt="Post image"
+            className={`rounded-lg ${
+              insideModal ? "w-32 h-32" : "w-64 h-64"
+            } object-cover`}
+          />
+        )}
+
+        {commentImage && (
+          <Image
+            src={commentImage}
+            width={200}
+            height={200}
+            alt="Post image"
+            className={`rounded-lg ${
+              insideModal ? "w-32 h-32" : "w-64 h-64"
+            } object-cover`}
+          />
+        )}
+        {/* Replay to */}
         {replayTo && (
-          <span className="text-[15px] text-[#707E89] text-right">
+          <span className="text-[15px] text-[#707E89] text-right pb-2  border-b border-gray-100">
             Replaying to <span className="text-[#ee0e3a]">@{replayTo}</span>
           </span>
         )}
