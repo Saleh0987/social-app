@@ -80,7 +80,7 @@ export default function Post({data, id}: PostProps) {
     }
   }
 
-  const postUrl = `https://blogo-social-app-new.vercel.app/post/${id}`;
+  const postUrl = `https://blogo-social-app-new.vercel.app/${id}`;
 
   const shareText = `${data.text} by @${data.username} - Check it out on Bumble!`;
 
