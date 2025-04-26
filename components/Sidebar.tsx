@@ -14,7 +14,7 @@ import SidebarUserInfo from "./SidebarUserInfo";
 import Link from "next/link";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
-import {openLogoutModal} from "@/redux/slices/modalSlice";
+import {openLogoutModal, openProfileModal} from "@/redux/slices/modalSlice";
 
 export default function Sidebar() {
   const dispatch: AppDispatch = useDispatch();
@@ -36,7 +36,18 @@ export default function Sidebar() {
           <SidebarLink Icon={BellIcon} text="Notifications" />
           <SidebarLink Icon={InboxIcon} text="Messages" />
           <SidebarLink Icon={BookmarkIcon} text="Bookmarks" />
-          <SidebarLink Icon={UserIcon} text="Profile" />
+
+          {user?.name && (
+            <li
+              className="flex items-center text-xl mb-2 space-x-3 p-2.5 cursor-pointer"
+              onClick={() => {
+                dispatch(openProfileModal());
+              }}
+            >
+              <UserIcon className="h-7 hover:text-pink-700 transition-all duration-300" />
+              <span className="hidden xl:block">Profile</span>
+            </li>
+          )}
           {user?.name && (
             <li
               className="flex items-center text-xl mb-2 space-x-3 p-2.5 cursor-pointer"

@@ -5,7 +5,7 @@ const initialState = {
  username: "",
  email: "",
  uid: "",
- photoURL: "", // Add photoURL to state
+ photoURL: "",
 };
 
 const userSlice = createSlice({
@@ -17,14 +17,14 @@ const userSlice = createSlice({
    state.username = action.payload.username;
    state.email = action.payload.email;
    state.uid = action.payload.uid;
-   state.photoURL = action.payload.photoURL; // Store photoURL
+   state.photoURL = action.payload.photoURL;
   },
   signOutUser: (state) => {
    state.name = "";
    state.username = "";
    state.email = "";
    state.uid = "";
-   state.photoURL = ""; // Reset photoURL
+   state.photoURL = "";
   },
  },
 });

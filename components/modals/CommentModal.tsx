@@ -45,10 +45,10 @@ export default function CommentModal() {
     <Modal
       open={open}
       onClose={() => dispatch(closeCommentModal())}
-      className="flex items-center justify-center"
+      className="flex items-center justify-center p-2"
     >
       <div
-        className="w-full sm:w-[600px] h-[100vh] sm:h-[90vh] bg-white sm:rounded-xl 
+        className="w-full sm:w-[600px] h-[90vh] bg-white rounded-xl 
       outline-none relative flex flex-col"
       >
         <XMarkIcon

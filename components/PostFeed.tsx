@@ -40,7 +40,7 @@ export default function PostFeed() {
       <div
         className={`
     py-4 px-4 sm:px-6 text-lg sm:text-xl sticky top-0 z-10 
-    flex items-center justify-between 
+    flex items-center space-x-2
     bg-white/90 backdrop-blur-lg border-b border-gray-200/50 
     font-semibold text-gray-900 
     shadow-sm transition-all duration-300 ease-in-out
@@ -60,7 +60,7 @@ export default function PostFeed() {
             className={`
         text-sm sm:text-base text-gray-600 
         font-medium bg-gray-100/80 rounded-full 
-        px-3 py-1.5 truncate max-w-[150px] sm:max-w-[200px]
+        px-3 py-1.5 
         hover:bg-gray-200/80 transition-all duration-200
       `}
           >

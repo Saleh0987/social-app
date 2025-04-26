@@ -14,6 +14,7 @@ import Link from "next/link";
 import {getAuth} from "firebase/auth";
 import CommentModal from "@/components/modals/CommentModal";
 import {useEffect} from "react";
+import Moment from "react-moment";
 
 const fetchPost = async (id: string) => {
   const postRef = doc(db, "posts", id);
@@ -63,7 +64,9 @@ export default async function page({params}: pageProps) {
               image={post?.image}
               name={post?.name}
               username={post?.username}
+              timestamp={post?.timestamp}
             />
+
             <span className="text-[15px]">{post?.text}</span>
 
             {post?.postImage && (

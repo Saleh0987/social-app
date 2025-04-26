@@ -166,10 +166,10 @@ export function PostHeader({
     <div className="flex p-3 space-x-5">
       <Image
         src={image ? image : "/assets/user.png"}
-        width={44}
-        height={44}
+        width={36}
+        height={36}
         alt="logo"
-        className="w-11 h-11 rounded-full z-10 bg-white"
+        className="w-10 h-10 rounded-full z-10 bg-white"
       />
 
       <div className={`text-[15px] flex flex-col space-y-1.5 w-full `}>

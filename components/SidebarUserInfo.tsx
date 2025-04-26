@@ -3,6 +3,7 @@ import Image from "next/image";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
+import {openProfileModal} from "@/redux/slices/modalSlice";
 
 export default function SidebarUserInfo() {
   const dispatch: AppDispatch = useDispatch();
@@ -19,6 +20,9 @@ export default function SidebarUserInfo() {
         <div
           className="flex items-center justify-start lg:justify-center bg-gray-500/20 space-x-2 w-fit xl:w-[240px]
           hover:bg-gray-500/10 xl:p-3 xl:pe-6 rounded-full cursor-pointer transition-all duration-200"
+          onClick={() => {
+            dispatch(openProfileModal());
+          }}
         >
           <Image
             src={profileImage}

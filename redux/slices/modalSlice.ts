@@ -5,6 +5,7 @@ const initialState = {
  loginModalOpen: false,
  commentModalOpen: false,
  logoutModalOpen: false,
+ profileModalOpen: false,
  commentPostDetails: {
   name: "",
   username: "",
@@ -44,6 +45,12 @@ const modalSlice = createSlice({
   closeLogoutModal: (state) => {
    state.logoutModalOpen = false;
   },
+  openProfileModal: (state) => {
+   state.profileModalOpen = true;
+  },
+  closeProfileModal: (state) => {
+   state.profileModalOpen = false;
+  },
   setCommentPostDetails: (state, action) => {
    state.commentPostDetails.name = action.payload.name;
    state.commentPostDetails.username = action.payload.username;
@@ -61,7 +68,8 @@ export const { openSignUpModal, closeSignUpModal,
  openLoginModal, closeLoginModal,
  openCommentModal, closeCommentModal,
  setCommentPostDetails,
- openLogoutModal, closeLogoutModal
+ openLogoutModal, closeLogoutModal,
+ openProfileModal, closeProfileModal,
 } = modalSlice.actions;
 
 export default modalSlice.reducer;
