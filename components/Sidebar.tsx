@@ -37,7 +37,7 @@ export default function Sidebar() {
           <SidebarLink Icon={InboxIcon} text="Messages" />
           <SidebarLink Icon={BookmarkIcon} text="Bookmarks" />
 
-          {user?.name && (
+          {user?.name !== "Guest" && (
             <li
               className="flex items-center text-xl mb-2 space-x-3 p-2.5 cursor-pointer"
               onClick={() => {

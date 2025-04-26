@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
  signUpModalOpen: false,
@@ -6,6 +6,7 @@ const initialState = {
  commentModalOpen: false,
  logoutModalOpen: false,
  profileModalOpen: false,
+ likesModalOpen: false,
  commentPostDetails: {
   name: "",
   username: "",
@@ -14,7 +15,11 @@ const initialState = {
   image: "",
   postImage: "",
   commentImage: "",
- }
+ },
+ likesPostDetails: {
+  id: "",
+
+ },
 };
 
 const modalSlice = createSlice({
@@ -51,6 +56,14 @@ const modalSlice = createSlice({
   closeProfileModal: (state) => {
    state.profileModalOpen = false;
   },
+  openLikesModal: (state, action: PayloadAction<{ id: string; }>) => {
+   state.likesModalOpen = true;
+   state.likesPostDetails.id = action.payload.id;
+  },
+  closeLikesModal: (state) => {
+   state.likesModalOpen = false;
+   state.likesPostDetails.id = ""; // Reset id when closing
+  },
   setCommentPostDetails: (state, action) => {
    state.commentPostDetails.name = action.payload.name;
    state.commentPostDetails.username = action.payload.username;
@@ -60,16 +73,28 @@ const modalSlice = createSlice({
    state.commentPostDetails.postImage = action.payload.postImage;
    state.commentPostDetails.commentImage = action.payload.commentImage;
   },
-
+  // Add setLikesPostDetails reducer
+  setLikesPostDetails: (state, action) => {
+   state.likesPostDetails = action.payload;
+  },
  },
 });
 
-export const { openSignUpModal, closeSignUpModal,
- openLoginModal, closeLoginModal,
- openCommentModal, closeCommentModal,
+export const {
+ openSignUpModal,
+ closeSignUpModal,
+ openLoginModal,
+ closeLoginModal,
+ openCommentModal,
+ closeCommentModal,
  setCommentPostDetails,
- openLogoutModal, closeLogoutModal,
- openProfileModal, closeProfileModal,
+ openLogoutModal,
+ closeLogoutModal,
+ openProfileModal,
+ closeProfileModal,
+ openLikesModal,
+ closeLikesModal,
+ setLikesPostDetails,
 } = modalSlice.actions;
 
 export default modalSlice.reducer;

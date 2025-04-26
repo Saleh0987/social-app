@@ -1,6 +1,6 @@
 "use client";
 import {db} from "@/firebase";
-import {closeCommentModal, openLoginModal} from "@/redux/slices/modalSlice";
+import {openLoginModal} from "@/redux/slices/modalSlice";
 import {RootState} from "@/redux/store";
 import {
   ArrowPathIcon,
@@ -206,7 +206,7 @@ export default function PostInput({
   const profileImage = user.photoURL ? user.photoURL : defaultImage;
 
   return (
-    <div className="flex space-x-5 p-3 border-b border-gray-100">
+    <div className={`flex space-x-5 p-3 border-b border-gray-100 `}>
       <Image
         src={profileImage}
         width={44}
@@ -215,7 +215,7 @@ export default function PostInput({
         className={`w-10 h-10 rounded-full z-10 bg-white`}
       />
 
-      <div className="w-full">
+      <div className={`w-full ${insideModal ? "overflow-scroll" : ""}`}>
         <textarea
           className="resize-none outline-none w-full min-h-[50px] text-lg"
           placeholder={insideModal ? "Send your reply" : "What's happening!?"}
@@ -225,17 +225,19 @@ export default function PostInput({
 
         {/* Image Preview */}
         {imagePreview && (
-          <div className="relative mt-2">
+          <div className={`relative mt-2 `}>
             <Image
               src={imagePreview}
               width={200}
               height={200}
               alt="Selected image"
-              className="rounded-lg max-h-48 object-contain"
+              className={`rounded-lg max-h-48 object-contain ${
+                insideModal ? "absolute top-16 w-32 h-32" : "w-64 h-64"
+              }`}
             />
             <button
               onClick={removeImage}
-              className="absolute top-1 right-1 bg-gray-800 bg-opacity-50 rounded-full p-1"
+              className="absolute top-16 right-1 bg-gray-800 bg-opacity-50 rounded-full p-1"
             >
               <XMarkIcon className="w-5 h-5 text-white" />
             </button>
@@ -266,7 +268,7 @@ export default function PostInput({
               <div
                 ref={emojiPickerRef}
                 className={`absolute z-10 mt-8 -ml-4 ${
-                  insideModal ? "-top-64" : ""
+                  insideModal ? "-top-32" : ""
                 } bg-white border border-gray-200 rounded-lg shadow-lg p-3 
                 grid grid-cols-5 gap-2 w-52 max-h-40 overflow-y-auto`}
               >

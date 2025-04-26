@@ -118,7 +118,7 @@ export default function LoginModal() {
             onClick={() => dispatch(closeLoginModal())}
           />
           <div className="pt-10 pb-20 px-4 sm:px-20">
-            <h1 className="text-3xl font-bold mb-10">Log in to Busy Bee</h1>
+            <h1 className="text-3xl font-bold mb-10">Log in to Blogo</h1>
             <div className="w-full space-y-5 mb-10">
               <input
                 autoComplete="off"

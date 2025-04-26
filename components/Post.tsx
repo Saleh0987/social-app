@@ -40,15 +40,25 @@ export default function Post({data, id}: PostProps) {
       dispatch(openLoginModal());
       return;
     }
+
     const postRef = doc(db, "posts", id);
 
-    if (data.likes.includes(user.uid)) {
+    const newLike = {
+      id: user.uid,
+      name: user.name,
+      username: user.username,
+      image: user.photoURL || "",
+    };
+
+    const isLiked = data.likes.some((like: any) => like.id === newLike.id);
+
+    if (isLiked) {
       await updateDoc(postRef, {
-        likes: arrayRemove(user.uid),
+        likes: arrayRemove(newLike),
       });
     } else {
       await updateDoc(postRef, {
-        likes: arrayUnion(user.uid),
+        likes: arrayUnion(newLike),
       });
     }
   }
@@ -96,16 +106,16 @@ export default function Post({data, id}: PostProps) {
           )}
         </div>
         <div className="relative">
-          {data.likes.includes(user.uid) ? (
+          {data.likes.some((like: any) => like.id === user.uid) ? (
             <HeartSolidIcon
               className="w-[22px] h-[22px] cursor-pointer 
-          text-pink-600 transition-all"
+      text-pink-600 transition-all"
               onClick={() => likePost()}
             />
           ) : (
             <HeartIcon
               className="w-[22px] h-[22px] cursor-pointer 
-          hover:text-pink-500 transition-all"
+      hover:text-pink-500 transition-all"
               onClick={() => likePost()}
             />
           )}

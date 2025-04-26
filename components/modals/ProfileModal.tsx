@@ -260,7 +260,7 @@ export default function ProfileModal() {
                       }
                       width={80}
                       height={80}
-                      className="size-24 rounded-full object-cover"
+                      className="size-24 rounded-full object-contain"
                     />
                   </div>
                 </div>
@@ -292,7 +292,7 @@ export default function ProfileModal() {
                   alt={`${user?.name || "User"}'s profile picture`}
                   width={44}
                   height={44}
-                  className="size-24 rounded-full object-cover"
+                  className="size-24 rounded-full object-contain"
                 />
               </div>
               <div className="text-center space-y-2">

@@ -15,6 +15,8 @@ import {getAuth} from "firebase/auth";
 import CommentModal from "@/components/modals/CommentModal";
 import {useEffect} from "react";
 import Moment from "react-moment";
+import ProfileModal from "@/components/modals/ProfileModal";
+import LikesModal from "@/components/modals/LikesModal";
 
 const fetchPost = async (id: string) => {
   const postRef = doc(db, "posts", id);
@@ -114,6 +116,8 @@ export default async function page({params}: pageProps) {
       <SignUpPrompt />
       <LogoutModal />
       <CommentModal />
+      <ProfileModal />
+      <LikesModal id={id} />
     </>
   );
 }

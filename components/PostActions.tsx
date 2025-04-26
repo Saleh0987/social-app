@@ -13,13 +13,19 @@ import {useSelector, useDispatch} from "react-redux";
 import {useState} from "react";
 import {
   openCommentModal,
+  openLikesModal,
   openLoginModal,
   setCommentPostDetails,
 } from "@/redux/slices/modalSlice";
 
+interface Like {
+  id: string;
+  name: string;
+  image: string;
+}
 interface PostActionsProps {
   postId: string;
-  likes: string[];
+  likes: Like[];
   userId: string | null;
   name: string;
   username: string;
@@ -44,7 +50,7 @@ export default function PostActions({
   const user = useSelector((state: any) => state.user);
   const [likeCount, setLikeCount] = useState(likes.length);
   const [isLiked, setIsLiked] = useState(
-    userId ? likes.includes(userId) : false
+    userId ? likes.some((like) => like.id === userId) : false
   );
 
   const likePost = async () => {
@@ -55,16 +61,23 @@ export default function PostActions({
 
     const postRef = doc(db, "posts", postId);
 
+    const newLike = {
+      id: user.uid,
+      name: user.name,
+      username: user.username,
+      image: user.photoURL || "",
+    };
+
     try {
       if (isLiked) {
         await updateDoc(postRef, {
-          likes: arrayRemove(userId!),
+          likes: arrayRemove(newLike),
         });
         setLikeCount((prev) => prev - 1);
         setIsLiked(false);
       } else {
         await updateDoc(postRef, {
-          likes: arrayUnion(userId!),
+          likes: arrayUnion(newLike),
         });
         setLikeCount((prev) => prev + 1);
         setIsLiked(true);
@@ -88,15 +101,27 @@ export default function PostActions({
         id: postId,
         text,
         image,
-        postImage,
+        postImage: postImage || "",
+        commentImage: "",
       })
     );
     dispatch(openCommentModal());
   };
 
+  const handleLikesClick = () => {
+    if (!user.username) {
+      dispatch(openLoginModal());
+      return;
+    }
+    dispatch(openLikesModal({id: postId}));
+  };
+
   return (
     <>
-      <div className="border-b border-gray-100 p-3 text-[15px]">
+      <div
+        className="border-b border-gray-100 p-3 text-[15px] cursor-pointer"
+        onClick={handleLikesClick}
+      >
         <span className="font-bold">{likeCount}</span> Likes
       </div>
       <div className="border-b border-gray-100 p-3 text-[15px] flex justify-evenly">

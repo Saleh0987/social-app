@@ -47,47 +47,58 @@ export default function CommentModal() {
       onClose={() => dispatch(closeCommentModal())}
       className="flex items-center justify-center p-2"
     >
-      <div
-        className="w-full sm:w-[600px] h-[90vh] bg-white rounded-xl 
-      outline-none relative flex flex-col"
-      >
+      <div className="w-full sm:w-[600px] h-[90vh] bg-white rounded-xl shadow-lg outline-none relative flex flex-col overflow-hidden">
+        {/* Close button */}
         <XMarkIcon
-          className="w-7 mt-5 ms-5 cursor-pointer absolute top-0 left-0 z-10"
+          className="w-7 h-7 text-gray-600 hover:text-gray-800 cursor-pointer absolute top-4 left-4"
           onClick={() => dispatch(closeCommentModal())}
         />
-        <div className="flex flex-col h-full pt-14 pb-5 px-0 sm:px-5 overflow-hidden">
-          <div className="flex-shrink-0">
-            <PostHeader
-              name={commentDetails.name}
-              username={commentDetails.username}
-              text={commentDetails.text}
-              replayTo={commentDetails.username}
-              image={commentDetails.image}
-              postImage={commentDetails.postImage}
-              commentImage={commentDetails.commentImage}
-              insideModal={true}
-            />
+
+        {/* Modal content */}
+        <div className="flex flex-col h-full pt-16 pb-4">
+          {/* Scrollable Area (PostHeader + Comments together) */}
+          <div
+            ref={commentsRef}
+            className="flex-grow overflow-y-auto px-4 space-y-6 pb-4"
+          >
+            {/* Post Section */}
+            <div className="border-b border-gray-200 pb-4">
+              <PostHeader
+                name={commentDetails.name}
+                username={commentDetails.username}
+                text={commentDetails.text}
+                replayTo={commentDetails.username}
+                image={commentDetails.image}
+                postImage={commentDetails.postImage}
+                commentImage={commentDetails.commentImage}
+                insideModal={true}
+              />
+            </div>
+
+            {/* Comments Section */}
+            <div className="space-y-4">
+              {comments.length > 0 ? (
+                comments.map((comment, index) => (
+                  <Comment
+                    index={index}
+                    key={index}
+                    name={comment.name}
+                    username={comment.username}
+                    text={comment.text}
+                    image={comment.image}
+                    commentImage={comment.commentImage}
+                  />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 mt-10">
+                  No comments yet.
+                </p>
+              )}
+            </div>
           </div>
 
-          <div ref={commentsRef} className="flex-grow mt-4 overflow-y-auto">
-            {comments.length > 0 ? (
-              comments.map((comment, index) => (
-                <Comment
-                  index={index}
-                  key={index}
-                  name={comment.name}
-                  username={comment.username}
-                  text={comment.text}
-                  image={comment.image}
-                  commentImage={comment.commentImage}
-                />
-              ))
-            ) : (
-              <p className="text-center text-gray-500 p-3">No comments yet.</p>
-            )}
-          </div>
-
-          <div className="flex-shrink-0 mt-4 border-t border-gray-100 pt-4">
+          {/* New Comment Input */}
+          <div className="border-t border-gray-200 p-4">
             <PostInput insideModal={true} onCommentAdded={handleNewComment} />
           </div>
         </div>

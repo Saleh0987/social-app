@@ -17,7 +17,7 @@ export default function SignUpPrompt() {
           <span className="text-xl font-bold">
             Don't miss out on joining us!
           </span>
-          <span>People on Busy Bee always the first to know</span>
+          <span>People on Blogo always the first to know</span>
         </div>
 
         <div className="flex space-x-2 w-full md:w-fit p-3">
