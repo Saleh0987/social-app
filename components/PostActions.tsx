@@ -88,26 +88,6 @@ export default function PostActions({
     }
   };
 
-  const handleCommentClick = () => {
-    if (!user.username) {
-      dispatch(openLoginModal());
-      return;
-    }
-
-    dispatch(
-      setCommentPostDetails({
-        name,
-        username,
-        id: postId,
-        text,
-        image,
-        postImage: postImage || "",
-        commentImage: "",
-      })
-    );
-    dispatch(openCommentModal());
-  };
-
   const handleLikesClick = () => {
     if (!user.username) {
       dispatch(openLoginModal());
@@ -128,7 +108,6 @@ export default function PostActions({
         <div className="relative">
           <ChatBubbleOvalLeftEllipsisIcon
             className="w-[22px] h-[22px] cursor-pointer hover:text-[#ee0e3a] transition-all"
-            onClick={handleCommentClick}
             aria-label="Comment on post"
           />
           {comments.length > 0 && (

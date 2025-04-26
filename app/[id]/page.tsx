@@ -1,4 +1,6 @@
 "use client";
+
+import {useState, useEffect} from "react";
 import {Comment} from "@/components/Comment";
 import LogoutModal from "@/components/modals/LogoutModal";
 import Sidebar from "@/components/Sidebar";
@@ -6,29 +8,18 @@ import SignUpPrompt from "@/components/SignUpPrompt";
 import Widgets from "@/components/Widgets";
 import PostHeaders from "@/components/PostHeaders";
 import PostActions from "@/components/PostActions";
+import PostInput from "@/components/PostInput";
 import {db} from "@/firebase";
 import {ArrowLeftIcon} from "@heroicons/react/24/outline";
-import {doc, getDoc} from "firebase/firestore";
+import {doc, onSnapshot, getDoc, updateDoc} from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import {getAuth} from "firebase/auth";
 import CommentModal from "@/components/modals/CommentModal";
-import {useEffect} from "react";
-import Moment from "react-moment";
 import ProfileModal from "@/components/modals/ProfileModal";
 import LikesModal from "@/components/modals/LikesModal";
-
-const fetchPost = async (id: string) => {
-  const postRef = doc(db, "posts", id);
-  const postSnap = await getDoc(postRef);
-  return postSnap.data();
-};
-
-interface pageProps {
-  params: {
-    id: string;
-  };
-}
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
 
 interface Comment {
   name: string;
@@ -36,14 +27,60 @@ interface Comment {
   text: string;
   image: string;
   commentImage?: string;
+  id: string;
 }
 
-export default async function page({params}: pageProps) {
-  const {id} = params;
-  const post = await fetchPost(id);
+interface pageProps {
+  params: {
+    id: string;
+  };
+}
 
+export default function Page({params}: pageProps) {
+  const {id} = params;
+  const [post, setPost] = useState<any>(null);
   const auth = getAuth();
   const userId = auth.currentUser?.uid || null;
+  const user = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    const postRef = doc(db, "posts", id);
+    const unsubscribe = onSnapshot(postRef, (doc) => {
+      if (doc.exists()) {
+        setPost({id: doc.id, ...doc.data()});
+      } else {
+        console.log("No such post!");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [id]);
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const postRef = doc(db, "posts", id);
+      const postSnap = await getDoc(postRef);
+
+      if (postSnap.exists()) {
+        const postData = postSnap.data();
+        const updatedComments = postData.comments.filter(
+          (comment: any) => comment.id !== commentId
+        );
+
+        await updateDoc(postRef, {
+          comments: updatedComments,
+        });
+
+        console.log("Comment deleted successfully!");
+      }
+    } catch (error) {
+      console.error("Error deleting comment: ", error);
+    }
+  };
+
+  if (!post) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -95,20 +132,28 @@ export default async function page({params}: pageProps) {
           />
 
           {post?.comments.length > 0 ? (
-            post?.comments.map((comment: Comment, index: number) => (
+            post?.comments.map((comment: Comment) => (
               <Comment
-                index={index}
-                key={index}
+                id={comment.id}
+                key={comment.id}
                 name={comment.name}
                 username={comment.username}
                 text={comment.text}
                 image={comment.image}
                 commentImage={comment.commentImage}
+                postId={id}
+                postOwnerUsername={post?.username}
+                onDelete={handleDeleteComment}
               />
             ))
           ) : (
             <p className="text-center text-gray-500 p-3">No comments yet.</p>
           )}
+
+          <div className="border-t border-gray-200 p-4">
+            <PostInput insideModal={true} postId={id} />
+          </div>
+
           <div className="flex-shrink-0 mt-4 border-t border-gray-100 pt-4"></div>
         </div>
         <Widgets />

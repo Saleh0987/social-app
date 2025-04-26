@@ -1,3 +1,5 @@
+"use client";
+
 import {db} from "@/firebase";
 import {
   openCommentModal,
@@ -10,6 +12,7 @@ import {
   ChartBarIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   HeartIcon,
+  ClipboardIcon,
 } from "@heroicons/react/24/outline";
 import {HeartIcon as HeartSolidIcon} from "@heroicons/react/24/solid";
 import {
@@ -22,9 +25,10 @@ import {
 } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, {useState, useEffect, useRef} from "react";
 import Moment from "react-moment";
 import {useDispatch, useSelector} from "react-redux";
+import {FaFacebook, FaTwitter, FaWhatsapp} from "react-icons/fa";
 
 interface PostProps {
   data: DocumentData;
@@ -34,6 +38,20 @@ interface PostProps {
 export default function Post({data, id}: PostProps) {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareMenuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        shareMenuRef.current &&
+        !shareMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowShareMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   async function likePost() {
     if (!user.username) {
@@ -42,7 +60,6 @@ export default function Post({data, id}: PostProps) {
     }
 
     const postRef = doc(db, "posts", id);
-
     const newLike = {
       id: user.uid,
       name: user.name,
@@ -63,6 +80,41 @@ export default function Post({data, id}: PostProps) {
     }
   }
 
+  const postUrl = `https://blogo-social-app-new.vercel.app/post/${id}`;
+
+  const shareText = `${data.text} by @${data.username} - Check it out on Bumble!`;
+
+  const shareToFacebook = () => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      postUrl
+    )}&quote=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setShowShareMenu(false);
+  };
+
+  const shareToTwitter = () => {
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      postUrl
+    )}&text=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setShowShareMenu(false);
+  };
+
+  const shareToWhatsApp = () => {
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      `${shareText} ${postUrl}`
+    )}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    setShowShareMenu(false);
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(postUrl).then(() => {
+      alert("Link copied to clipboard!");
+      setShowShareMenu(false);
+    });
+  };
+
   return (
     <div className="border-b border-gray-100 shadow-sm">
       <Link href={"/" + id}>
@@ -77,10 +129,10 @@ export default function Post({data, id}: PostProps) {
       </Link>
 
       <div className="ml-16 p-3 flex space-x-14">
-        <div className="relative ">
+        <div className="relative">
           <ChatBubbleOvalLeftEllipsisIcon
             className="w-[22px] h-[22px] cursor-pointer 
-          hover:text-[#ee0e3a] transition-all "
+          hover:text-[#ee0e3a] transition-all"
             onClick={() => {
               if (!user.username) {
                 dispatch(openLoginModal());
@@ -129,7 +181,55 @@ export default function Post({data, id}: PostProps) {
           <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed" />
         </div>
         <div className="relative">
-          <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed" />
+          <ArrowUpTrayIcon
+            className="w-[22px] h-[22px] cursor-pointer hover:text-[#ee0e3a] transition-all"
+            onClick={() => setShowShareMenu(!showShareMenu)}
+          />
+          {showShareMenu && (
+            <div
+              ref={shareMenuRef}
+              className="absolute z-10 mt-2 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-2 w-56"
+            >
+              <ul className="space-y-1">
+                <li>
+                  <button
+                    onClick={shareToFacebook}
+                    className="flex items-center space-x-2 w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+                  >
+                    <FaFacebook className="w-5 h-5 text-blue-600" />
+                    <span>Facebook</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={shareToTwitter}
+                    className="flex items-center space-x-2 w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+                  >
+                    <FaTwitter className="w-5 h-5 text-blue-400" />
+                    <span>Twitter</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={shareToWhatsApp}
+                    className="flex items-center space-x-2 w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+                  >
+                    <FaWhatsapp className="w-5 h-5 text-green-500" />
+                    <span>WhatsApp</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={copyLink}
+                    className="flex items-center space-x-2 w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+                  >
+                    <ClipboardIcon className="w-5 h-5 text-gray-600" />
+                    <span>Copy Link</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -237,7 +337,6 @@ export function PostHeader({
             } object-cover`}
           />
         )}
-        {/* Replay to */}
         {replayTo && (
           <span className="text-[15px] text-[#707E89] text-right pb-2  border-b border-gray-100">
             Replaying to <span className="text-[#ee0e3a]">@{replayTo}</span>

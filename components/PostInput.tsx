@@ -1,4 +1,5 @@
 "use client";
+
 import {db} from "@/firebase";
 import {openLoginModal} from "@/redux/slices/modalSlice";
 import {RootState} from "@/redux/store";
@@ -51,11 +52,13 @@ const emojis = [
 interface PostInputProps {
   insideModal?: boolean;
   onCommentAdded?: (comment: any) => void;
+  postId?: string; // إضافة postId كخاصية
 }
 
 export default function PostInput({
-  insideModal,
+  insideModal = false,
   onCommentAdded,
+  postId,
 }: PostInputProps) {
   const [text, setText] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -114,7 +117,7 @@ export default function PostInput({
   // Toggle date picker
   const toggleDatePicker = () => {
     setShowDatePicker((prev) => !prev);
-    setShowEmojiPicker(false); // Close emoji picker if open
+    setShowEmojiPicker(false);
   };
 
   // Handle date selection
@@ -166,6 +169,10 @@ export default function PostInput({
       dispatch(openLoginModal());
       return;
     }
+    if (!postId && !commentDetails.id) {
+      console.error("No postId provided for comment.");
+      return;
+    }
     setCommentLoading(true);
     try {
       let imageUrl = "";
@@ -178,14 +185,17 @@ export default function PostInput({
         imageUrl = await getDownloadURL(imageRef);
       }
 
-      const postRef = doc(db, "posts", commentDetails.id);
+      const targetPostId = postId || commentDetails.id; // استخدام postId إذا كان موجودًا، وإلا commentDetails.id
+      const postRef = doc(db, "posts", targetPostId);
       const newComment = {
-        name: user.name,
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 10),
+        name: user.name || "Anonymous",
         username: user.username,
         text: text,
         image: user.photoURL || "",
         commentImage: imageUrl || "",
       };
+
       await updateDoc(postRef, {
         comments: arrayUnion(newComment),
       });
@@ -198,9 +208,34 @@ export default function PostInput({
       setCommentLoading(false);
     } catch (error) {
       setCommentLoading(false);
-      console.error("Error adding document: ", error);
+      console.error("Error adding comment: ", error);
     }
   }
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        showEmojiPicker &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+      if (
+        showDatePicker &&
+        datePickerRef.current &&
+        !datePickerRef.current.contains(event.target as Node)
+      ) {
+        setShowDatePicker(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showEmojiPicker, showDatePicker]);
 
   const defaultImage = "/assets/user.png";
   const profileImage = user.photoURL ? user.photoURL : defaultImage;
@@ -263,7 +298,6 @@ export default function PostInput({
                 className="w-[22px] h-[22px] text-[#ee0e3a] hover:text-pink-500 transition-all"
               />
             </div>
-            {/* Emoji Picker */}
             {showEmojiPicker && (
               <div
                 ref={emojiPickerRef}
@@ -286,7 +320,6 @@ export default function PostInput({
             <div onClick={toggleDatePicker}>
               <CalendarIcon className="w-[22px] h-[22px] text-[#ee0e3a] hover:text-pink-500 transition-all" />
             </div>
-            {/* Date Picker */}
             {showDatePicker && (
               <div
                 ref={datePickerRef}

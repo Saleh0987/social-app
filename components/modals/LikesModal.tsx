@@ -114,8 +114,8 @@ export default function LikesModal({id}: LikesModalProps) {
                     <p className="text-sm font-medium text-gray-900">
                       {like.name || "Anonymous"}
                     </p>
-                    <p className="text-xs font-medium text-gray-500">
-                      {like.username || "Anonymous"}
+                    <p className="text-xs font-medium text-gray-500 ps-2">
+                      @{like.username || "Anonymous"}
                     </p>
                   </div>
                 </li>

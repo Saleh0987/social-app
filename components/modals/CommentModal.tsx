@@ -41,6 +41,12 @@ export default function CommentModal() {
     }
   };
 
+  const handleDeleteComment = (commentId: string) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.id !== commentId)
+    );
+  };
+
   return (
     <Modal
       open={open}
@@ -78,15 +84,18 @@ export default function CommentModal() {
             {/* Comments Section */}
             <div className="space-y-4">
               {comments.length > 0 ? (
-                comments.map((comment, index) => (
+                comments.map((comment) => (
                   <Comment
-                    index={index}
-                    key={index}
+                    postId={commentDetails.id}
+                    postOwnerUsername={commentDetails.username}
+                    id={comment.id}
+                    key={comment.id}
                     name={comment.name}
                     username={comment.username}
                     text={comment.text}
                     image={comment.image}
                     commentImage={comment.commentImage}
+                    onDelete={handleDeleteComment}
                   />
                 ))
               ) : (
