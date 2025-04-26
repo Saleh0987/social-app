@@ -39,7 +39,7 @@ export default function PostFeed() {
     <div className="flex-grow max-w-2xl border-x border-gray-100">
       <div
         className={`
-    py-4 px-4 sm:px-6 text-lg sm:text-xl sticky top-0 z-10 
+    py-4 px-4 sm:px-6 text-lg sm:text-xl sticky top-0 z-50 
     flex items-center space-x-2
     bg-white/90 backdrop-blur-lg border-b border-gray-200/50 
     font-semibold text-gray-900 
