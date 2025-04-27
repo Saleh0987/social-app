@@ -1,5 +1,4 @@
 "use client";
-
 import {db} from "@/firebase";
 import {
   openCommentModal,
@@ -29,6 +28,7 @@ import React, {useState, useEffect, useRef} from "react";
 import Moment from "react-moment";
 import {useDispatch, useSelector} from "react-redux";
 import {FaFacebook, FaTwitter, FaWhatsapp} from "react-icons/fa";
+import toast from "react-hot-toast";
 
 interface PostProps {
   data: DocumentData;
@@ -110,7 +110,7 @@ export default function Post({data, id}: PostProps) {
 
   const copyLink = () => {
     navigator.clipboard.writeText(postUrl).then(() => {
-      alert("Link copied to clipboard!");
+      toast.success("Link copied to clipboard!");
       setShowShareMenu(false);
     });
   };

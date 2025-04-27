@@ -16,6 +16,7 @@ import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 import {auth, storage} from "@/firebase";
 import {signInUser} from "@/redux/slices/userSlice";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export default function SignUpModal() {
   const [email, setEmail] = useState("");
@@ -75,6 +76,7 @@ export default function SignUpModal() {
           photoURL: downloadUrl,
         })
       );
+      toast.success("Welcome ❤️");
     } catch (error: any) {
       console.error("Sign up error:", error);
       alert(error.message || "Something went wrong");
@@ -105,6 +107,8 @@ export default function SignUpModal() {
               photoURL: userCredentials.user.photoURL || "",
             })
           );
+          toast.success("Welcome ❤️");
+
           return;
         } catch (error: any) {
           console.error(

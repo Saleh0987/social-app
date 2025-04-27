@@ -73,7 +73,6 @@ const modalSlice = createSlice({
    state.commentPostDetails.postImage = action.payload.postImage;
    state.commentPostDetails.commentImage = action.payload.commentImage;
   },
-  // Add setLikesPostDetails reducer
   setLikesPostDetails: (state, action) => {
    state.likesPostDetails = action.payload;
   },

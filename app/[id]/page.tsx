@@ -20,6 +20,7 @@ import ProfileModal from "@/components/modals/ProfileModal";
 import LikesModal from "@/components/modals/LikesModal";
 import {useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
+import toast from "react-hot-toast";
 
 interface Comment {
   name: string;
@@ -41,7 +42,6 @@ export default function Page({params}: pageProps) {
   const [post, setPost] = useState<any>(null);
   const auth = getAuth();
   const userId = auth.currentUser?.uid || null;
-  const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const postRef = doc(db, "posts", id);
@@ -55,32 +55,6 @@ export default function Page({params}: pageProps) {
 
     return () => unsubscribe();
   }, [id]);
-
-  const handleDeleteComment = async (commentId: string) => {
-    try {
-      const postRef = doc(db, "posts", id);
-      const postSnap = await getDoc(postRef);
-
-      if (postSnap.exists()) {
-        const postData = postSnap.data();
-        const updatedComments = postData.comments.filter(
-          (comment: any) => comment.id !== commentId
-        );
-
-        await updateDoc(postRef, {
-          comments: updatedComments,
-        });
-
-        console.log("Comment deleted successfully!");
-      }
-    } catch (error) {
-      console.error("Error deleting comment: ", error);
-    }
-  };
-
-  if (!post) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -97,64 +71,69 @@ export default function Page({params}: pageProps) {
             Bumble
           </div>
 
-          <div className="flex flex-col p-3 space-y-5 border-b border-gray-100">
-            <PostHeaders
-              postId={id}
-              image={post?.image}
-              name={post?.name}
-              username={post?.username}
-              timestamp={post?.timestamp}
-            />
-
-            <span className="text-[15px]">{post?.text}</span>
-
-            {post?.postImage && (
-              <Image
-                src={post?.postImage}
-                width={200}
-                height={200}
-                alt="Post image"
-                className={`rounded-lg w-64 h-64 object-cover`}
-              />
-            )}
-          </div>
-
-          <PostActions
-            postId={id}
-            likes={post?.likes || []}
-            userId={userId}
-            name={post?.name || ""}
-            username={post?.username || ""}
-            text={post?.text || ""}
-            image={post?.image || "/assets/user.png"}
-            postImage={post?.postImage}
-            comments={post?.comments || []}
-          />
-
-          {post?.comments.length > 0 ? (
-            post?.comments.map((comment: Comment) => (
-              <Comment
-                id={comment.id}
-                key={comment.id}
-                name={comment.name}
-                username={comment.username}
-                text={comment.text}
-                image={comment.image}
-                commentImage={comment.commentImage}
-                postId={id}
-                postOwnerUsername={post?.username}
-                onDelete={handleDeleteComment}
-              />
-            ))
+          {!post ? (
+            <div>Loading...</div>
           ) : (
-            <p className="text-center text-gray-500 p-3">No comments yet.</p>
+            <>
+              <div className="flex flex-col p-3 space-y-5 border-b border-gray-100">
+                <PostHeaders
+                  postId={id}
+                  image={post?.image}
+                  name={post?.name}
+                  username={post?.username}
+                  timestamp={post?.timestamp}
+                />
+
+                <span className="text-[15px]">{post?.text}</span>
+
+                {post?.postImage && (
+                  <Image
+                    src={post?.postImage}
+                    width={200}
+                    height={200}
+                    alt="Post image"
+                    className={`rounded-lg w-64 h-64 object-cover`}
+                  />
+                )}
+              </div>
+
+              <PostActions
+                postId={id}
+                likes={post?.likes || []}
+                userId={userId}
+                name={post?.name || ""}
+                username={post?.username || ""}
+                text={post?.text || ""}
+                image={post?.image || "/assets/user.png"}
+                postImage={post?.postImage}
+                comments={post?.comments || []}
+              />
+
+              {post?.comments.length > 0 ? (
+                post?.comments.map((comment: Comment) => (
+                  <Comment
+                    id={comment.id}
+                    key={comment.id}
+                    name={comment.name}
+                    username={comment.username}
+                    text={comment.text}
+                    image={comment.image}
+                    commentImage={comment.commentImage}
+                    postId={id}
+                    postOwnerUsername={post?.username}
+                  />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 p-3">
+                  No comments yet.
+                </p>
+              )}
+
+              <div className="border-t border-gray-200 p-4">
+                <PostInput insideModal={true} postId={id} />
+              </div>
+            </>
           )}
-
-          <div className="border-t border-gray-200 p-4">
-            <PostInput insideModal={true} postId={id} />
-          </div>
-
-          <div className="flex-shrink-0 mt-4 border-t border-gray-100 pt-4"></div>
         </div>
         <Widgets />
       </div>

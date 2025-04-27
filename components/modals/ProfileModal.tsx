@@ -178,7 +178,7 @@ export default function ProfileModal() {
       open={open}
       onClose={() => {
         dispatch(closeProfileModal());
-        handleCancel(); // Reset edit state when closing
+        handleCancel();
       }}
       className="flex items-center justify-center"
       aria-labelledby="profile-modal-title"

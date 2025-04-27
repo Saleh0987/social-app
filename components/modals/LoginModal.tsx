@@ -14,6 +14,7 @@ import {
 import {auth} from "@/firebase";
 import {signInUser} from "@/redux/slices/userSlice";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export default function LoginModal() {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +30,7 @@ export default function LoginModal() {
     setIsLoginLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      toast.success("Login Successfully");
     } finally {
       setIsLoginLoading(false);
     }
@@ -56,6 +58,8 @@ export default function LoginModal() {
               uid: userCredentials.user.uid,
             })
           );
+          toast.success("Welcome ❤️");
+
           return;
         } catch (error) {
           console.error(

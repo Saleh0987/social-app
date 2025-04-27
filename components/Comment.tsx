@@ -8,6 +8,7 @@ import {doc, getDoc, updateDoc} from "firebase/firestore";
 import {db} from "@/firebase";
 import {useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
+import toast from "react-hot-toast";
 
 interface CommentProps {
   id: string;
@@ -51,7 +52,7 @@ export function Comment({
           comments: updatedComments,
         });
 
-        console.log("Comment deleted successfully!");
+        toast.success("Comment deleted successfully!");
 
         if (onDelete) {
           onDelete(id);

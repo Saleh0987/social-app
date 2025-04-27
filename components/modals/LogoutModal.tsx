@@ -15,6 +15,7 @@ import {auth} from "@/firebase";
 import {signOutUser} from "@/redux/slices/userSlice";
 import {useRouter} from "next/navigation";
 import {usePathname} from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function LogoutModal() {
   const open = useSelector((state: RootState) => state.modals.logoutModalOpen);
@@ -31,6 +32,7 @@ export default function LogoutModal() {
     if (pathname !== "/") {
       router.push("/");
     }
+    toast.success("Logout Successfully");
   }
 
   return (

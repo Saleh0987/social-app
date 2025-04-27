@@ -25,6 +25,7 @@ import Image from "next/image";
 import React, {useRef, useState, useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {storage} from "@/firebase";
+import toast from "react-hot-toast";
 
 const emojis = [
   "😊",
@@ -52,7 +53,7 @@ const emojis = [
 interface PostInputProps {
   insideModal?: boolean;
   onCommentAdded?: (comment: any) => void;
-  postId?: string; // إضافة postId كخاصية
+  postId?: string;
 }
 
 export default function PostInput({
@@ -158,6 +159,7 @@ export default function PostInput({
       setImageFile(null);
       setImagePreview(null);
       setLoading(false);
+      toast.success("Post Sharing Success");
     } catch (error) {
       setLoading(false);
       console.error("Error adding document: ", error);
@@ -185,7 +187,7 @@ export default function PostInput({
         imageUrl = await getDownloadURL(imageRef);
       }
 
-      const targetPostId = postId || commentDetails.id; // استخدام postId إذا كان موجودًا، وإلا commentDetails.id
+      const targetPostId = postId || commentDetails.id;
       const postRef = doc(db, "posts", targetPostId);
       const newComment = {
         id: Date.now().toString() + Math.random().toString(36).substring(2, 10),
@@ -206,6 +208,7 @@ export default function PostInput({
         onCommentAdded(newComment);
       }
       setCommentLoading(false);
+      toast.success("Comment added Success");
     } catch (error) {
       setCommentLoading(false);
       console.error("Error adding comment: ", error);
